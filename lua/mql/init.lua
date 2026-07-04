@@ -152,7 +152,7 @@ function M.setup(opts)
     -- Strict validation: both fields are required
     if not M.config.metaeditor_path or not M.config.mql5_include_path then
         vim.notify(
-        "[mql.nvim] Error: Both 'metaeditor_path' and 'mql5_include_path' are REQUIRED in setup(). Plugin disabled.",
+            "[mql.nvim] Error: Both 'metaeditor_path' and 'mql5_include_path' are REQUIRED in setup(). Plugin disabled.",
             vim.log.levels.ERROR)
         return
     end
@@ -164,11 +164,19 @@ function M.setup(opts)
             mqh = "cpp",
         },
     })
+    -- ADD THIS RIGHT BELOW IT:
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "cpp",
+        callback = function()
+            vim.bo.commentstring = "// %s"
+        end,
+    })
     vim.treesitter.language.register("cpp", "mql5")
 
     -- Set up keymap if requested
     if M.config.bind_key then
         vim.keymap.set("n", M.config.bind_key, function()
+            vim.cmd('write')
             M.compile()
         end, { desc = "Compile current MQL5 file via Wine" })
     end
